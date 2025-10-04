@@ -1,4 +1,4 @@
-package com.pixnpunk.jni
+package com.libsnxqs.jni
 
 import java.io.FileDescriptor
 
