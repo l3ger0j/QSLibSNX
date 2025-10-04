@@ -67,9 +67,9 @@
 	typedef jmethodID QSP_CALLBACK;
 
 	#include "../qsp.h"
-#include "org_libsnxqsp_jni_SNXLib.h"
+	#include "org_libsnxqsp_jni_SNXLib.h"
 
-extern JavaVM *snxJvm;
+	extern JavaVM *snxJvm;
 	extern jclass snxApiClass;
 	extern jobject snxApiObject;
 
