@@ -127,7 +127,7 @@ target_link_libraries(qslibsnx PRIVATE oniguruma::onig)
 
 if (BUILD_JVM)
 	target_compile_definitions(qslibsnx PRIVATE _JVM)
-	if (NOT _ANDROID)
+	if (NOT ANDROID)
 		find_package(JNI)
 		target_include_directories(qslibsnx PRIVATE ${JNI_INCLUDE_DIRS})
 		target_link_libraries(qslibsnx PRIVATE ${JNI_LIBRARIES})
