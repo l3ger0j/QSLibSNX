@@ -158,7 +158,7 @@ JNIEXPORT jint JNICALL Java_com_libsnxqs_jni_QSLibSNX_getMaxVarsCount
  * Signature: ()Ljava/lang/Object;
  */
 JNIEXPORT jobject JNICALL Java_com_libsnxqs_jni_QSLibSNX_getVarNameByIndex
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     com_libsnxqs_jni_QSLibSNX
