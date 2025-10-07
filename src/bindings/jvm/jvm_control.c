@@ -625,38 +625,38 @@ JNIEXPORT void JNICALL Java_com_libsnxqs_jni_QSLibSNX_init(JNIEnv *env, jobject 
 	/* Get JVM references */
 	(*env)->GetJavaVM(env, &snxJvm);
 
-	clazz = (*env)->FindClass(env, "org/libsnxqsp/jni/SNXLib");
+	clazz = (*env)->FindClass(env, "com/libsnxqs/jni/QSLibSNX");
 	snxApiClass = (jclass)(*env)->NewGlobalRef(env, clazz);
 	snxApiObject = (jobject)(*env)->NewGlobalRef(env, this);
 
-	clazz = (*env)->FindClass(env, "org/libsnxqsp/jni/SNXLib$ListItem");
+	clazz = (*env)->FindClass(env, "com/libsnxqs/jni/QSLibSNX$ListItem");
 	snxListItemClass = (jclass)(*env)->NewGlobalRef(env, clazz);
 
-	clazz = (*env)->FindClass(env, "org/libsnxqsp/jni/SNXLib$ExecutionState");
+	clazz = (*env)->FindClass(env, "com/libsnxqs/jni/QSLibSNX$ExecutionState");
 	snxExecutionStateClass = (jclass)(*env)->NewGlobalRef(env, clazz);
 
-	clazz = (*env)->FindClass(env, "org/libsnxqsp/jni/SNXLib$ErrorData");
+	clazz = (*env)->FindClass(env, "com/libsnxqs/jni/QSLibSNX$ErrorData");
 	snxErrorInfoClass = (jclass)(*env)->NewGlobalRef(env, clazz);
 
-	clazz = (*env)->FindClass(env, "org/libsnxqsp/jni/SNXLib$VarValResp");
+	clazz = (*env)->FindClass(env, "com/libsnxqs/jni/QSLibSNX$VarValResp");
 	snxVarValResp = (jclass)(*env)->NewGlobalRef(env, clazz);
 
 	/* Get references to callbacks */
-	qspSetCallBack(QSP_CALL_DEBUG, (*env)->GetMethodID(env, snxApiClass, "onDebug", "(Ljava/lang/String;)V"));
+	qspSetCallBack(QSP_CALL_DEBUG, (*env)->GetMethodID(env, snxApiClass, "onCallDebug", "(Ljava/lang/String;)V"));
 	qspSetCallBack(QSP_CALL_ISPLAYINGFILE, (*env)->GetMethodID(env, snxApiClass, "onIsPlayingFile", "(Ljava/lang/String;)Z"));
 	qspSetCallBack(QSP_CALL_PLAYFILE, (*env)->GetMethodID(env, snxApiClass, "onPlayFile", "(Ljava/lang/String;I)V"));
 	qspSetCallBack(QSP_CALL_CLOSEFILE, (*env)->GetMethodID(env, snxApiClass, "onCloseFile", "(Ljava/lang/String;)V"));
 	qspSetCallBack(QSP_CALL_SHOWIMAGE, (*env)->GetMethodID(env, snxApiClass, "onShowImage", "(Ljava/lang/String;)V"));
 	qspSetCallBack(QSP_CALL_SHOWWINDOW, (*env)->GetMethodID(env, snxApiClass, "onShowWindow", "(IZ)V"));
-	qspSetCallBack(QSP_CALL_SHOWMENU, (*env)->GetMethodID(env, snxApiClass, "onShowMenu", "()I"));
+	qspSetCallBack(QSP_CALL_SHOWMENU, (*env)->GetMethodID(env, snxApiClass, "onShowMenuNew", "()I"));
 	qspSetCallBack(QSP_CALL_SHOWMSGSTR, (*env)->GetMethodID(env, snxApiClass, "onShowMessage", "(Ljava/lang/String;)V"));
 	qspSetCallBack(QSP_CALL_REFRESHINT, (*env)->GetMethodID(env, snxApiClass, "onRefreshInt", "()V"));
 	qspSetCallBack(QSP_CALL_SETTIMER, (*env)->GetMethodID(env, snxApiClass, "onSetTimer", "(I)V"));
 	qspSetCallBack(QSP_CALL_SYSTEM, (*env)->GetMethodID(env, snxApiClass, "onSystem", "(Ljava/lang/String;)V"));
 	qspSetCallBack(QSP_CALL_SETINPUTSTRTEXT, (*env)->GetMethodID(env, snxApiClass, "onSetInputStrText", "(Ljava/lang/String;)V"));
 	qspSetCallBack(QSP_CALL_DELETEMENU, (*env)->GetMethodID(env, snxApiClass, "onDeleteMenu", "()V"));
-	qspSetCallBack(QSP_CALL_OPENGAMESTATUS, (*env)->GetMethodID(env, snxApiClass, "onOpenGame", "(Ljava/lang/String;)V"));
-	qspSetCallBack(QSP_CALL_SAVEGAMESTATUS, (*env)->GetMethodID(env, snxApiClass, "onSaveGame", "(Ljava/lang/String;)V"));
+	qspSetCallBack(QSP_CALL_OPENGAMESTATUS, (*env)->GetMethodID(env, snxApiClass, "onOpenGameStatus", "(Ljava/lang/String;)V"));
+	qspSetCallBack(QSP_CALL_SAVEGAMESTATUS, (*env)->GetMethodID(env, snxApiClass, "onSaveGameStatus", "(Ljava/lang/String;)V"));
 	qspSetCallBack(QSP_CALL_SLEEP, (*env)->GetMethodID(env, snxApiClass, "onSleep", "(I)V"));
 	qspSetCallBack(QSP_CALL_GETMSCOUNT, (*env)->GetMethodID(env, snxApiClass, "onGetMsCount", "()I"));
 	qspSetCallBack(QSP_CALL_INPUTBOX, (*env)->GetMethodID(env, snxApiClass, "onInputBox", "(Ljava/lang/String;)Ljava/lang/String;"));

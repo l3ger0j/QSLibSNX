@@ -44,7 +44,7 @@ typedef uint16_t char16_t;
 
 /* -------- */
 
-#include "qsp_config.h"
+#include "qslibsnx_config.h"
 #include "bindings/bindings_config.h"
 #include "bindings/qsp.h"
 #include <oniguruma.h>
@@ -64,7 +64,7 @@ typedef uint16_t char16_t;
 		#define QSP_PATHDELIMS QSP_FMT("/")
 	#endif
 
-	#define QSP_VER QSP_FMT(QSP_VER_STR)
+	#define QSP_VER QSP_FMT(QSLIBSNX_VER_STR)
 	#define QSP_LOCALE "C"
 	#define QSP_STRCHAR QSP_FMT("$")
 	#define QSP_LABEL QSP_FMT(":")

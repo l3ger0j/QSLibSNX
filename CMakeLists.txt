@@ -1,7 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 project(qslibsnx VERSION 5.8.0)
 
-set(QSP_GAMEMIN_VER "5.7.0")
+set(QSLIBSNX_GAMEMIN_VER "5.7.0")
 
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
@@ -79,7 +79,7 @@ else()
 	add_library(oniguruma::onig ALIAS onig)
 endif()
 
-configure_file(qsp_config.h.cmakein qsp_config.h @ONLY)
+configure_file(qslibsnx_config.h.cmakein qslibsnx_config.h @ONLY)
 
 set(QSLIBSNX_SOURCES
 		src/bindings/bindings_config.h
@@ -139,13 +139,13 @@ target_include_directories(qslibsnx
 )
 
 generate_export_header(qslibsnx
-		BASE_NAME Qsp
-		EXPORT_MACRO_NAME QSP_EXTERN
+		BASE_NAME QSLibSNX
+		EXPORT_MACRO_NAME QSLIBSNX_EXTERN
 )
 
-write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/cmake/Qsp/QspConfigVersion.cmake COMPATIBILITY AnyNewerVersion)
-configure_package_config_file(QspConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/Qsp/QspConfig.cmake
-		INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Qsp"
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/cmake/QSLibSNX/QSLibSNXConfigVersion.cmake COMPATIBILITY AnyNewerVersion)
+configure_package_config_file(QSLibSNXConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/QSLibSNX/QSLibSNXConfig.cmake
+		INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/QSLibSNX"
 )
 
 set(QSLIBSNX_INSTALL_TARGETS qslibsnx)
@@ -157,11 +157,11 @@ if (TARGET onig)
 	endif()
 endif()
 
-export(TARGETS ${QSLIBSNX_INSTALL_TARGETS} NAMESPACE Qsp:: FILE ${CMAKE_CURRENT_BINARY_DIR}/QspTargets.cmake)
+export(TARGETS ${QSLIBSNX_INSTALL_TARGETS} NAMESPACE QSLibSNX:: FILE ${CMAKE_CURRENT_BINARY_DIR}/QSLibSNXTargets.cmake)
 
-install(TARGETS ${QSLIBSNX_INSTALL_TARGETS} EXPORT QspTargets)
+install(TARGETS ${QSLIBSNX_INSTALL_TARGETS} EXPORT QSLibSNXTargets)
 
-install(EXPORT QspTargets FILE QspTargets.cmake NAMESPACE Qsp:: DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/Qsp")
+install(EXPORT QSLibSNXTargets FILE QSLibSNXTargets.cmake NAMESPACE QSLibSNX:: DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/QSLibSNX")
 
 install(
 		DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/cmake
@@ -171,7 +171,7 @@ install(
 install(FILES
 		src/bindings/qsp.h
 		src/bindings/bindings_config.h
-		"${CMAKE_CURRENT_BINARY_DIR}/qsp_export.h"
+		"${CMAKE_CURRENT_BINARY_DIR}/qslibsnx_export.h"
 		DESTINATION
 		"${CMAKE_INSTALL_INCLUDEDIR}/src"
 )

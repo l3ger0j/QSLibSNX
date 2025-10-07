@@ -36,7 +36,7 @@ abstract class QSLibSNX {
     external fun getCompiledDateTime(): String?
 
     // --- Callback's ---
-    external fun isInCallBack(): Boolean
+//    external fun isInCallBack(): Boolean
 //    external fun setCallBack(type: Int, func: QSP_CALLBACK)
 
     // --- Main Description ---

@@ -90,14 +90,6 @@ JNIEXPORT jstring JNICALL Java_com_libsnxqs_jni_QSLibSNX_getCompiledDateTime
 
 /*
  * Class:     com_libsnxqs_jni_QSLibSNX
- * Method:    isInCallBack
- * Signature: ()Z
- */
-JNIEXPORT jboolean JNICALL Java_com_libsnxqs_jni_QSLibSNX_isInCallBack
-  (JNIEnv *, jobject);
-
-/*
- * Class:     com_libsnxqs_jni_QSLibSNX
  * Method:    getMainDesc
  * Signature: ()Ljava/lang/String;
  */

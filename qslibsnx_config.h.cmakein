@@ -1,0 +1,8 @@
+#ifndef QSLIBSNX_CONFIG_H
+#define QSLIBSNX_CONFIG_H
+
+#define QSLIBSNX_VER_STR "@qslibsnx_VERSION@"
+#define QSLIBSNX_GAMEMINVER_STR "@QSLIBSNX_GAMEMIN_VER@"
+
+#endif
+
