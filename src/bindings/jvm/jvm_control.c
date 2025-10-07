@@ -652,7 +652,7 @@ JNIEXPORT void JNICALL Java_com_libsnxqs_jni_QSLibSNX_init(JNIEnv *env, jobject 
 	qspSetCallBack(QSP_CALL_SHOWMSGSTR, (*env)->GetMethodID(env, snxApiClass, "onShowMessage", "(Ljava/lang/String;)V"));
 	qspSetCallBack(QSP_CALL_REFRESHINT, (*env)->GetMethodID(env, snxApiClass, "onRefreshInt", "()V"));
 	qspSetCallBack(QSP_CALL_SETTIMER, (*env)->GetMethodID(env, snxApiClass, "onSetTimer", "(I)V"));
-	qspSetCallBack(QSP_CALL_SYSTEM, (*env)->GetMethodID(env, snxApiClass, "onSystem", "(Ljava/lang/String;)V"));
+	// qspSetCallBack(QSP_CALL_SYSTEM, (*env)->GetMethodID(env, snxApiClass, "onSystem", "(Ljava/lang/String;)V"));
 	qspSetCallBack(QSP_CALL_SETINPUTSTRTEXT, (*env)->GetMethodID(env, snxApiClass, "onSetInputStrText", "(Ljava/lang/String;)V"));
 	qspSetCallBack(QSP_CALL_DELETEMENU, (*env)->GetMethodID(env, snxApiClass, "onDeleteMenu", "()V"));
 	qspSetCallBack(QSP_CALL_OPENGAMESTATUS, (*env)->GetMethodID(env, snxApiClass, "onOpenGameStatus", "(Ljava/lang/String;)V"));
