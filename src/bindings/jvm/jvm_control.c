@@ -476,50 +476,31 @@ JNIEXPORT jstring JNICALL Java_com_libsnxqs_jni_QSLibSNX_getErrorDesc(JNIEnv *en
 /* Working with memory */
 
 /* Loading a new game from memory */
-QSP_BOOL QSPLoadGameWorldFromData(const char *data, int dataSize, const QSP_CHAR *fileName)
-{
-	char *ptr;
-	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
-	qspResetError();
-	if (qspIsDisableCodeExec) return QSP_FALSE;
-	ptr = (char *)malloc(dataSize + 3);
-	memcpy(ptr, data, dataSize);
-	ptr[dataSize] = ptr[dataSize + 1] = ptr[dataSize + 2] = 0;
-	qspOpenQuestFromData(ptr, dataSize + 3, (QSP_CHAR *)fileName, QSP_FALSE);
-	free(ptr);
-	if (qspErrorNum) return QSP_FALSE;
-	return QSP_TRUE;
-}
 JNIEXPORT jboolean JNICALL Java_com_libsnxqs_jni_QSLibSNX_loadGameWorldFromData(JNIEnv *env, jobject this, jbyteArray data, jstring fileName)
 {
-	//converting data
-	jint dataSize = (*env)->GetArrayLength(env, data);
-	jbyte *jbuf = malloc(dataSize * sizeof(jbyte));
-	if (jbuf == NULL)
-		return JNI_FALSE;
+	/* We don't execute any game code here */
+	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
+	qspResetError();
 
-	(*env)->GetByteArrayRegion(env, data, 0, dataSize, jbuf);
-	int size = dataSize;
-	char *mydata = (char *)jbuf;
+	if (qspIsDisableCodeExec) return QSP_FALSE;
 
-	/* assume the prompt string and user input has less than 128
-		characters */
-	int fileNameLen = (*env)->GetStringLength(env, fileName) + 1;
-	char buf[fileNameLen];
-	const jbyte *str;
-	str = (*env)->GetStringUTFChars(env, fileName, NULL);
-	if (str == NULL) {
-		free(jbuf);
-		return JNI_FALSE; /* OutOfMemoryError already thrown */
-	}
+	const jint dataSize = (*env)->GetArrayLength(env, data);
+	char *ptr = malloc(dataSize + 3);
+	jbyte *arrayData = (*env)->GetByteArrayElements(env, data, 0);
+	memcpy(ptr, (char *)arrayData, dataSize);
+	(*env)->ReleaseByteArrayElements(env, data, arrayData, JNI_ABORT);
 
-	QSP_CHAR *wcs = qspC2W(str);
-	jboolean result = QSPLoadGameWorldFromData(mydata, size, wcs);
-	(*env)->ReleaseStringUTFChars(env, fileName, str);
-	free(wcs);
+	ptr[dataSize] = ptr[dataSize + 1] = ptr[dataSize + 2] = 0;
 
-	free(jbuf);
-	return result;
+	QSP_CHAR* name = snxFromJavaString(env, fileName);
+	qspOpenQuestFromData(ptr, dataSize + 3, name, QSP_FALSE);
+
+	free(name);
+	free(ptr);
+
+	if (qspErrorNum) return QSP_FALSE;
+
+	return QSP_TRUE;
 }
 
 /* Saving state to memory */
@@ -550,15 +531,15 @@ QSP_BOOL QSPSaveGameAsData(void **buf, int *realSize, QSP_BOOL isRefresh)
 	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
 	return QSP_TRUE;
 }
+
 JNIEXPORT jbyteArray JNICALL Java_com_libsnxqs_jni_QSLibSNX_saveGameAsData(JNIEnv *env, jobject this, jboolean isRefresh)
 {
 	void *buffer = NULL;
 	int bufferSize = 0;
-	if (QSPSaveGameAsData(&buffer, &bufferSize, (QSP_BOOL)isRefresh) == QSP_FALSE)
+	if (QSPSaveGameAsData(&buffer, &bufferSize, isRefresh) == QSP_FALSE)
 		return NULL;
 
-	jbyteArray result;
-	result = (*env)->NewByteArray(env, bufferSize);
+	const jbyteArray result = (*env)->NewByteArray(env, bufferSize);
 	if (result == NULL)
 		return NULL;
 
@@ -568,39 +549,29 @@ JNIEXPORT jbyteArray JNICALL Java_com_libsnxqs_jni_QSLibSNX_saveGameAsData(JNIEn
 }
 
 /* Loading state from memory */
-QSP_BOOL QSPOpenSavedGameFromData(const void *data, int dataSize, QSP_BOOL isRefresh)
-{
-	int dataLen;
-	QSP_CHAR *ptr;
-	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
-	qspPrepareExecution();
-	if (qspIsDisableCodeExec) return QSP_FALSE;
-	dataLen = dataSize / sizeof(QSP_CHAR);
-	ptr = (QSP_CHAR *)malloc((dataLen + 1) * sizeof(QSP_CHAR));
-	memcpy(ptr, data, dataSize);
-	ptr[dataLen] = 0;
-	qspOpenGameStatusFromString(ptr);
-	free(ptr);
-	if (qspErrorNum) return QSP_FALSE;
-	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
-	return QSP_TRUE;
-}
 JNIEXPORT jboolean JNICALL Java_com_libsnxqs_jni_QSLibSNX_openSavedGameFromData(JNIEnv *env, jobject this, jbyteArray data, jboolean isRefresh)
 {
-	//converting data
-	jint dataSize = (*env)->GetArrayLength(env, data);
-	jbyte *jbuf = malloc(dataSize * sizeof(jbyte));
-	if (jbuf == NULL)
-		return JNI_FALSE;
+	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
+	qspPrepareExecution();
 
-	(*env)->GetByteArrayRegion(env, data, 0, dataSize, jbuf);
-	int size = dataSize;
-	void *mydata = (void *)jbuf;
+	if (qspIsDisableCodeExec) return QSP_FALSE;
 
-	jboolean result = QSPOpenSavedGameFromData(mydata, size, (QSP_BOOL)isRefresh) == QSP_TRUE;
+	const jint dataSize = (*env)->GetArrayLength(env, data);
+	const int dataLen = dataSize / sizeof(QSP_CHAR);
+	QSP_CHAR *ptr = malloc(dataLen * sizeof(QSP_CHAR));
+	jbyte *arrayData = (*env)->GetByteArrayElements(env, data, 0);
+	memcpy(ptr, arrayData, dataLen);
+	(*env)->ReleaseByteArrayElements(env, data, arrayData, JNI_ABORT);
+	ptr[dataLen] = 0;
 
-	free(jbuf);
-	return result;
+	qspOpenGameStatusFromString(ptr);
+
+	free(ptr);
+
+	if (qspErrorNum) return QSP_FALSE;
+	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
+
+	return QSP_TRUE;
 }
 
 /* Restarting the game */

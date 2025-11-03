@@ -23,7 +23,6 @@
 
 #include <jni.h>
 #include <string.h>
-#include <android/log.h>
 
 static int qspUTF8_mbtowc(int *pwc, unsigned char *s, int n)
 {
@@ -175,6 +174,7 @@ jstring snxToJavaString(JNIEnv *env, QSP_CHAR *str)
 
 QSP_CHAR *snxFromJavaString(JNIEnv *env, jstring str)
 {
+	if (!str) return 0;
 	jsize length;
 	jchar *chars;
 	QSP_CHAR *res;

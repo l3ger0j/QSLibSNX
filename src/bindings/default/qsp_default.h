@@ -15,8 +15,6 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-#include "../qsp.h"
-
 #ifndef QSP_DEFAULTDEFINES
 	#define QSP_DEFAULTDEFINES
 
@@ -88,6 +86,8 @@
 	#else
 		typedef int (*QSP_CALLBACK)();
 	#endif
+
+	#include "../qsp.h"
 
 	#ifdef __cplusplus
 	extern "C"

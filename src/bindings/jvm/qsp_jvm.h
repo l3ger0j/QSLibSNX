@@ -15,11 +15,10 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 */
 
-#include <jni.h>
+#ifndef QSP_JVMDEFINES
+	#define QSP_JVMDEFINES
 
-#ifndef QSP_ANDROIDDEFINES
-	#define QSP_ANDROIDDEFINES
-
+	#include <jni.h>
 	static int qspEndiannessTestValue = 1;
 
 	#ifdef _UNICODE
@@ -50,8 +49,10 @@
 		#else
 			#define QSP_FOPEN qspFileOpen
 		#endif
+
+		#define QSP_FDOPEN fdopen
 	#else
-		#error "Non-Unicode build using Android binding is not supported"
+		#error "Non-Unicode build using JVM binding is not supported"
 	#endif
 
 	#define QSP_FIXBYTESORDER(a) ((*(char *)&(qspEndiannessTestValue) == 1) ? \

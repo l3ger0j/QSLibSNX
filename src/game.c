@@ -326,6 +326,27 @@ void qspOpenQuestFromData(char *data, int dataSize, QSP_CHAR *fileName, QSP_BOOL
 	}
 }
 
+void qspOpenQuestFromFD(const int fd, QSP_CHAR *fileName, const QSP_BOOL isAddLocs)
+{
+	FILE *f = QSP_FDOPEN(fd, "rb");
+	if (f == NULL)
+	{
+		qspSetError(QSP_ERR_FILENOTFOUND);
+		return;
+	}
+
+	fseek(f, 0, SEEK_END);
+	const int fileSize = ftell(f);
+	char *buf = malloc(fileSize + 3);
+	fseek(f, 0, SEEK_SET);
+	fread(buf, 1, fileSize, f);
+	fclose(f);
+	buf[fileSize] = buf[fileSize + 1] = buf[fileSize + 2] = 0;
+	qspOpenQuestFromData(buf, fileSize + 3, fileName, isAddLocs);
+
+	free(buf);
+}
+
 void qspOpenQuest(QSP_CHAR *fileName, QSP_BOOL isAddLocs)
 {
 	FILE *f;
@@ -438,6 +459,25 @@ int qspSaveGameStatusToString(QSP_CHAR **buf)
         return 0;
     }
 	return len;
+}
+
+void qspSaveGameStatusByFD(const int fd)
+{
+	FILE *f = QSP_FDOPEN(fd, "wb");
+	if (f == NULL)
+	{
+		qspSetError(QSP_ERR_FILENOTFOUND);
+		return;
+	}
+
+	int len;
+	QSP_CHAR *buf;
+	if ((len = qspSaveGameStatusToString(&buf)))
+	{
+		fwrite(buf, sizeof(QSP_CHAR), len, f);
+		free(buf);
+	}
+	fclose(f);
 }
 
 void qspSaveGameStatus(QSP_CHAR *fileName)
@@ -651,6 +691,25 @@ void qspOpenGameStatusFromString(QSP_CHAR *str)
 	qspPlayPLFiles();
 	qspCallSetTimer(qspTimerInterval);
 	qspExecLocByVarNameWithArgs(QSP_FMT("ONGLOAD"), 0, 0);
+}
+
+void qspOpenGameStatusFromFD(const int fd)
+{
+	FILE *f;
+	if (!((f = QSP_FDOPEN(fd, "rb"))))
+	{
+		qspSetError(QSP_ERR_FILENOTFOUND);
+		return;
+	}
+	fseek(f, 0, SEEK_END);
+	const int fileLen = ftell(f) / sizeof(QSP_CHAR);
+	QSP_CHAR *buf = malloc((fileLen + 1) * sizeof(QSP_CHAR));
+	fseek(f, 0, SEEK_SET);
+	fread(buf, sizeof(QSP_CHAR), fileLen, f);
+	fclose(f);
+	buf[fileLen] = 0;
+	qspOpenGameStatusFromString(buf);
+	free(buf);
 }
 
 void qspOpenGameStatus(QSP_CHAR *fileName)

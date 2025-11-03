@@ -112,7 +112,7 @@ void qspCallSetInputStrText(QSP_CHAR* text)
 
 void qspCallAddMenuItem(QSP_CHAR* name, QSP_CHAR* imgPath)
 {
-	if (name == NULL || imgPath == NULL) return;
+	if (name == NULL) return;
 	if (qspCallBacks[QSP_CALL_ADDMENUITEM]) {
 		QSPCallState state;
 		JNIEnv *javaEnv = snxGetJniEnv();
@@ -330,13 +330,11 @@ QSP_CHAR* qspCallInputBox(QSP_CHAR* text)
 		jstring qspText = snxToJavaString(javaEnv, text);
 
 		qspSaveCallState(&state, QSP_TRUE, QSP_FALSE);
-		jstring jResult = (jstring)((*javaEnv)->CallObjectMethod(javaEnv, snxApiObject, qspCallBacks[QSP_CALL_INPUTBOX], qspText));
-		const char* str = (*javaEnv)->GetStringUTFChars(javaEnv, jResult, NULL);
-		if (str != NULL)
-			buffer = qspC2W(str);
+		jstring jResult = (*javaEnv)->CallObjectMethod(javaEnv, snxApiObject, qspCallBacks[QSP_CALL_INPUTBOX], qspText);
+		if (jResult != NULL)
+			buffer = snxFromJavaString(javaEnv, jResult);
 		else
 			buffer = qspGetNewText(QSP_FMT(""), 0);
-		(*javaEnv)->ReleaseStringUTFChars(javaEnv, jResult, str);
 		(*javaEnv)->DeleteLocalRef(javaEnv, qspText);
 		qspRestoreCallState(&state);
 		return buffer;

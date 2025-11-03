@@ -446,9 +446,9 @@ int qspReCodeGetIntVal(QSP_CHAR *val)
 	return num;
 }
 
-int qspCodeWriteIntVal(QSP_CHAR ** s, int * bufSize, int len, int val, QSP_BOOL isCode)
+int qspCodeWriteIntVal(QSP_CHAR **s, int *bufSize, int len, int val, QSP_BOOL isCode)
 {
-	QSP_CHAR buf[12], * temp;
+	QSP_CHAR buf[12], *temp;
 	qspNumToStr(buf, val);
 	if (isCode)
 	{
@@ -461,9 +461,9 @@ int qspCodeWriteIntVal(QSP_CHAR ** s, int * bufSize, int len, int val, QSP_BOOL 
 	return qspAddBufText(s, bufSize, QSP_STRSDELIM, len, QSP_LEN(QSP_STRSDELIM), QSP_FALSE);
 }
 
-int qspCodeWriteVal(QSP_CHAR ** s, int * bufSize, int len, QSP_CHAR * val, QSP_BOOL isCode)
+int qspCodeWriteVal(QSP_CHAR **s, int *bufSize, int len, QSP_CHAR *val, QSP_BOOL isCode)
 {
-	QSP_CHAR * temp;
+	QSP_CHAR *temp;
 	if (val)
 	{
 		if (isCode)
