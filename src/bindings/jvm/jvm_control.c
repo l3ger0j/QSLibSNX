@@ -475,6 +475,64 @@ JNIEXPORT jstring JNICALL Java_com_libsnxqs_jni_QSLibSNX_getErrorDesc(JNIEnv *en
 
 /* Working with memory */
 
+/* Working with FileDescriptor */
+
+/* Loading a new game from FileDescriptor */
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD(JNIEnv *env, jobject this, jint fileDescriptor, jstring fileName)
+{
+	if (fileDescriptor < 0) return JNI_ERR;
+
+	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
+	qspResetError();
+
+	if (qspIsDisableCodeExec) return QSP_FALSE;
+
+	QSP_CHAR* name = ndkFromJavaString(env, fileName);
+	qspOpenQuestFromFD(fileDescriptor, name, QSP_FALSE);
+	free(name);
+
+	if (qspErrorNum) return QSP_FALSE;
+
+	return QSP_TRUE;
+}
+
+/* Saving state by FileDescriptor */
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_saveGameByFD(JNIEnv *env, jobject this, jint fileDescriptor, jboolean isRefresh)
+{
+	if (fileDescriptor < 0) return JNI_ERR;
+
+	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
+	qspPrepareExecution();
+
+	if (qspIsDisableCodeExec) return QSP_FALSE;
+
+	qspSaveGameStatusByFD(fileDescriptor);
+
+	if (qspErrorNum) return QSP_FALSE;
+	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
+
+	return QSP_TRUE;
+}
+
+
+/* Loading state from FileDescriptor */
+JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_openSavedGameFromFD(JNIEnv *env, jobject this, jint fileDescriptor, jboolean isRefresh)
+{
+	if (fileDescriptor < 0) return JNI_ERR;
+
+	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
+	qspPrepareExecution();
+
+	if (qspIsDisableCodeExec) return QSP_FALSE;
+
+	qspOpenGameStatusFromFD(fileDescriptor);
+
+	if (qspErrorNum) return QSP_FALSE;
+	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
+
+	return QSP_TRUE;
+}
+
 /* Loading a new game from memory */
 JNIEXPORT jboolean JNICALL Java_com_libsnxqs_jni_QSLibSNX_loadGameWorldFromData(JNIEnv *env, jobject this, jbyteArray data, jstring fileName)
 {
