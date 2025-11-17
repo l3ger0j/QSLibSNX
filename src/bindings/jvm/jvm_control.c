@@ -487,7 +487,7 @@ JNIEXPORT jboolean JNICALL Java_com_libsdhqs_jni_QSLibSDH_loadGameWorldFromFD(JN
 
 	if (qspIsDisableCodeExec) return QSP_FALSE;
 
-	QSP_CHAR* name = ndkFromJavaString(env, fileName);
+	QSP_CHAR* name = snxFromJavaString(env, fileName);
 	qspOpenQuestFromFD(fileDescriptor, name, QSP_FALSE);
 	free(name);
 
