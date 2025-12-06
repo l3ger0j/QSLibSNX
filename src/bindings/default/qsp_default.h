@@ -48,6 +48,8 @@
 		#else
 			#define QSP_FOPEN qspFileOpen
 		#endif
+
+		#define QSP_FDOPEN
 	#else
 		#define QSP_FOPEN fopen
 			#if defined(_WIN) || defined(_PSP)
