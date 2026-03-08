@@ -166,7 +166,8 @@ JNIEXPORT jobject JNICALL Java_com_libsnxqs_jni_QSLibSNX_getExprValue(JNIEnv *en
 JNIEXPORT void JNICALL Java_com_libsnxqs_jni_QSLibSNX_setInputStrText(JNIEnv *env, jobject this, jstring val)
 {
 	QSP_CHAR *strConverted = snxFromJavaString(env, val);
-	qspCurInputLen = qspAddText(&strConverted, (QSP_CHAR *)val, 0, -1, QSP_FALSE);
+	qspCurInputLen = qspAddText(&qspCurInput, strConverted, 0, -1, QSP_FALSE);
+	free(strConverted);
 }
 /* ------------------------------------------------------------ */
 /* List of actions */
