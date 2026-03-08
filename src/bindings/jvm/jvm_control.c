@@ -45,6 +45,44 @@ jclass snxExecutionStateClass;
 jclass snxErrorInfoClass;
 jclass snxVarValResp;
 
+jfieldID fieldImageID = NULL;
+jfieldID fieldTextID = NULL;
+
+void initFieldIDs(JNIEnv *env) {
+	if (fieldImageID == NULL) {
+		fieldImageID = (*env)->GetFieldID(env, snxListItemClass, "image", "Ljava/lang/String;");
+	}
+	if (fieldTextID == NULL) {
+		fieldTextID = (*env)->GetFieldID(env, snxListItemClass, "text", "Ljava/lang/String;");
+	}
+}
+
+JNIListItem snxToJavaListItem(JNIEnv *env, QSP_CHAR *image, QSP_CHAR *text)
+{
+	JNIListItem res;
+	jfieldID fieldId;
+	jobject jniListItem = (*env)->AllocObject(env, snxListItemClass);
+
+	res.ListItem = jniListItem;
+	res.Image = snxToJavaString(env, image);
+	res.Name = snxToJavaString(env, text);
+
+	fieldId = (*env)->GetFieldID(env, snxListItemClass, "image", "Ljava/lang/String;");
+	(*env)->SetObjectField(env, jniListItem, fieldId, res.Image);
+
+	fieldId = (*env)->GetFieldID(env, snxListItemClass, "text", "Ljava/lang/String;");
+	(*env)->SetObjectField(env, jniListItem, fieldId, res.Name);
+
+	return res;
+}
+
+void snxReleaseJavaListItem(JNIEnv *env, JNIListItem *listItem)
+{
+	(*env)->DeleteLocalRef(env, listItem->ListItem);
+	(*env)->DeleteLocalRef(env, listItem->Image);
+	(*env)->DeleteLocalRef(env, listItem->Name);
+}
+
 /* ------------------------------------------------------------ */
 /* Debugging */
 
@@ -177,12 +215,18 @@ JNIEXPORT jobjectArray JNICALL Java_com_libsnxqs_jni_QSLibSNX_getActions(JNIEnv 
 {
 	int i;
 	JNIListItem item;
+
+	if (qspCurActionsCount < 0) return NULL;
+
 	jobjectArray res = (*env)->NewObjectArray(env, qspCurActionsCount, snxListItemClass, 0);
+
 	for (i = 0; i < qspCurActionsCount; ++i)
 	{
 		item = snxToJavaListItem(env, qspCurActions[i].Image, qspCurActions[i].Desc);
 		(*env)->SetObjectArrayElement(env, res, i, item.ListItem);
+		snxReleaseJavaListItem(env, &item);
 	}
+
 	return res;
 }
 
@@ -236,12 +280,18 @@ JNIEXPORT jobjectArray JNICALL Java_com_libsnxqs_jni_QSLibSNX_getObjects(JNIEnv 
 {
 	int i;
 	JNIListItem item;
+
+	if (qspCurObjectsCount < 0) return NULL;
+
 	jobjectArray res = (*env)->NewObjectArray(env, qspCurObjectsCount, snxListItemClass, 0);
+
 	for (i = 0; i < qspCurObjectsCount; ++i)
 	{
 		item = snxToJavaListItem(env, qspCurObjects[i].Image, qspCurObjects[i].Desc);
 		(*env)->SetObjectArrayElement(env, res, i, item.ListItem);
+		snxReleaseJavaListItem(env, &item);
 	}
+
 	return res;
 }
 
@@ -364,27 +414,45 @@ JNIEXPORT jobject JNICALL Java_com_libsnxqs_jni_QSLibSNX_getVarNameByIndex(JNIEn
 /* Executing a line of code */
 JNIEXPORT jboolean JNICALL Java_com_libsnxqs_jni_QSLibSNX_execString(JNIEnv *env, jobject this, jstring s, jboolean isRefresh)
 {
-	if (qspIsExitOnError && qspErrorNum) return JNI_FALSE;
+	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
 	qspPrepareExecution();
-	if (qspIsDisableCodeExec) return JNI_FALSE;
+	if (qspIsDisableCodeExec) return QSP_FALSE;
+
+	if (s == NULL) return QSP_FALSE;
+
 	QSP_CHAR *strConverted = snxFromJavaString(env, s);
-	qspExecStringAsCodeWithArgs((QSP_CHAR *)strConverted, 0, 0);
+	if (strConverted == NULL) return QSP_FALSE;
+
+	qspExecStringAsCodeWithArgs(strConverted, 0, 0);
+
+	free(strConverted);
+
 	if (qspErrorNum) return QSP_FALSE;
-	if ((QSP_BOOL)isRefresh) qspCallRefreshInt(QSP_FALSE);
-	return JNI_TRUE;
+	if (isRefresh) qspCallRefreshInt(QSP_FALSE);
+
+	return QSP_TRUE;
 }
 
 /* Executing the code of the specified location */
 JNIEXPORT jboolean JNICALL Java_com_libsnxqs_jni_QSLibSNX_execLocationCode(JNIEnv *env, jobject this, jstring name, jboolean isRefresh)
 {
-	if (qspIsExitOnError && qspErrorNum) return JNI_FALSE;
+	if (qspIsExitOnError && qspErrorNum) return QSP_FALSE;
 	qspPrepareExecution();
-	if (qspIsDisableCodeExec) return JNI_FALSE;
+	if (qspIsDisableCodeExec) return QSP_FALSE;
+
+	if (name == NULL) return QSP_FALSE;
+
 	QSP_CHAR *strConverted = snxFromJavaString(env, name);
+	if (strConverted == NULL) return QSP_FALSE;
+
 	qspExecLocByName(strConverted, QSP_FALSE);
+
+	free(strConverted);
+
 	if (qspErrorNum) return JNI_FALSE;
 	if ((QSP_BOOL)isRefresh) qspCallRefreshInt(QSP_FALSE);
-	return JNI_TRUE;
+
+	return QSP_TRUE;
 }
 
 /* Execution of the location-counter code */
@@ -718,6 +786,7 @@ JNIEXPORT void JNICALL Java_com_libsnxqs_jni_QSLibSNX_terminate(JNIEnv *env, job
 	(*env)->DeleteGlobalRef(env, snxListItemClass);
 	(*env)->DeleteGlobalRef(env, snxExecutionStateClass);
 	(*env)->DeleteGlobalRef(env, snxErrorInfoClass);
+	(*env)->DeleteGlobalRef(env, snxVarValResp);
 }
 
 #endif

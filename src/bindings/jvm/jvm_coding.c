@@ -185,30 +185,4 @@ QSP_CHAR *snxFromJavaString(JNIEnv *env, jstring str)
 	return res;
 }
 
-JNIListItem snxToJavaListItem(JNIEnv *env, QSP_CHAR *image, QSP_CHAR *text)
-{
-	JNIListItem res;
-	jfieldID fieldId;
-	jobject jniListItem = (*env)->AllocObject(env, snxListItemClass);
-
-	res.ListItem = jniListItem;
-	res.Image = snxToJavaString(env, image);
-	res.Name = snxToJavaString(env, text);
-
-	fieldId = (*env)->GetFieldID(env, snxListItemClass, "image", "Ljava/lang/String;");
-	(*env)->SetObjectField(env, jniListItem, fieldId, res.Image);
-
-	fieldId = (*env)->GetFieldID(env, snxListItemClass, "text", "Ljava/lang/String;");
-	(*env)->SetObjectField(env, jniListItem, fieldId, res.Name);
-
-	return res;
-}
-
-void snxReleaseJavaListItem(JNIEnv *env, JNIListItem *listItem)
-{
-	(*env)->DeleteLocalRef(env, listItem->ListItem);
-	(*env)->DeleteLocalRef(env, listItem->Image);
-	(*env)->DeleteLocalRef(env, listItem->Name);
-}
-
 #endif

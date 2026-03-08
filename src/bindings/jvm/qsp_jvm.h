@@ -90,7 +90,5 @@
 	QSP_CHAR *qspC2W(char *);
 	jstring snxToJavaString(JNIEnv *env, QSP_CHAR *str);
 	QSP_CHAR *snxFromJavaString(JNIEnv *env, jstring str);
-	JNIListItem snxToJavaListItem(JNIEnv *env, QSP_CHAR *image, QSP_CHAR *name);
-	void snxReleaseJavaListItem(JNIEnv *env, JNIListItem *listItem);
 
 #endif
